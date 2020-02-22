@@ -31,7 +31,7 @@
                     "slots": [
                         {
                             "name": "number",
-                            "type": "AMAZON.FOUR_DIGIT_NUMBER",
+                            "type": "AMAZON.NUMBER",
                             "samples": [
                                 "what are the top {number}",
                                 "what are the top {number} trends",
@@ -59,7 +59,7 @@
                     "slots": [
                         {
                             "name": "number",
-                            "type": "AMAZON.FOUR_DIGIT_NUMBER",
+                            "type": "AMAZON.NUMBER",
                             "confirmationRequired": false,
                             "elicitationRequired": true,
                             "prompts": {

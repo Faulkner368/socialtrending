@@ -39,8 +39,8 @@ class LaunchRequestHandler(AbstractRequestHandler):
     
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = 'Hello! ask me "What are the top five trends?"'
-        reprompt = "Social trending here... ask me, What are the top five or top ten trends"
+        speak_output = "Hello, ask me, What are the top five trends?"
+        reprompt = "Social trending here... ask me, What are the top five trends"
 
         
         return (
@@ -51,7 +51,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
         )
 
 class CaptureNumberOfTrendsIntentHandler(AbstractRequestHandler):
-    """Handler for Hello World Intent."""
+    """Handler for Capture number of trends Intent."""
     
     DATE_STR_FORMAT = "%d/%m/%yT%H:%M:%S"
     DATA_REFRESH_RATE = 300
@@ -149,10 +149,10 @@ class CaptureNumberOfTrendsIntentHandler(AbstractRequestHandler):
         Some comments
         """
         
-        consumer_key = ''
-        consumer_secret = ''
-        access_token = ''
-        access_token_secret = ''
+        consumer_key = 'JTAEUX65smzbxW2m0kFNAayOH'
+        consumer_secret = 'IDKLNDVTO3Vwf5q4gLGNfbLqxHt3e7xjfdY0WomrCLLP5oXUor'
+        access_token = '1069016670-F33LPwQTbwXObaSBOkfOlbMbL0msaCz0d85ioZb'
+        access_token_secret = 'N3qREFFxUlJPIwjK4apujSl4eO1WicJG1KerYIBPSal0f'
         return OAuth1(consumer_key, consumer_secret, access_token, access_token_secret)
         
     def get_twitter_trends(self, auth, handler_input):
@@ -240,17 +240,16 @@ class CaptureNumberOfTrendsIntentHandler(AbstractRequestHandler):
         if self.time_diff(last_cached, datetime.datetime.now()) < self.DATA_REFRESH_RATE:
             trends = stored_data["trending_data"]
             top_trends = self.get_top_trends(number_of_trends_wanted, trends)
-            speak_output = "Cached..." + self.create_text_from_top_trends(top_trends)
+            speak_output = self.create_text_from_top_trends(top_trends)
         else:
             auth = self.get_twitter_auth()
             trends = self.get_twitter_trends(auth, handler_input)
             top_trends = self.get_top_trends(number_of_trends_wanted, trends)
-            speak_output = "New..." + self.create_text_from_top_trends(top_trends)
+            speak_output = self.create_text_from_top_trends(top_trends)
 
         return (
             handler_input.response_builder
                 .speak(speak_output)
-                #.ask(reprompt)
                 .response
         )
 
@@ -262,12 +261,13 @@ class HelpIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "You can say hello to me! How can I help?"
+        speak_output = "You can ask me, what are the top five trends, what are the top ten trends etc"
+        ask_output = "Go ahead, ask me for the top five trends"
 
         return (
             handler_input.response_builder
                 .speak(speak_output)
-                .ask(speak_output)
+                .ask(ask_output)
                 .response
         )
 
@@ -357,6 +357,7 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
 sb = CustomSkillBuilder(persistence_adapter=s3_adapter)
 
 sb.add_request_handler(LaunchRequestHandler())
+sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CaptureNumberOfTrendsIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
