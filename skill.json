@@ -1,0 +1,49 @@
+{
+  "manifest": {
+    "publishingInformation": {
+      "locales": {
+        "en-GB": {
+          "summary": "Get latest trends from Twitter for the United Kingdom",
+          "examplePhrases": [
+            "Alexa open social trending"
+          ],
+          "keywords": [
+            "social",
+            "trends",
+            "trending",
+            "twitter"
+          ],
+          "name": "Social Trending",
+          "smallIconUri": "file://assets/images/en-GB_smallIconUri.png",
+          "description": "Uses the Twitter API to get the latest trends from within the United Kingdom. Ask it:\n\nWhat are the top five trends\nWhat are the top ten trends\netc",
+          "largeIconUri": "file://assets/images/en-GB_largeIconUri.png"
+        }
+      },
+      "isAvailableWorldwide": false,
+      "testingInstructions": "None.\n\nInstructions:\n\nAlexa open social trending... wait for Alexa to reply\n\nThen ask what are the top five trends in response",
+      "category": "SOCIAL_NETWORKING",
+      "distributionCountries": [
+        "GB"
+      ]
+    },
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "uri": "arn:aws:lambda:us-east-1:728097415463:function:1c2ee683-37b0-4d93-b051-eaf9cf8f2003:Release_0"
+        },
+        "interfaces": []
+      }
+    },
+    "manifestVersion": "1.0",
+    "privacyAndCompliance": {
+      "allowsPurchases": false,
+      "locales": {
+        "en-GB": {}
+      },
+      "isExportCompliant": true,
+      "containsAds": false,
+      "isChildDirected": false,
+      "usesPersonalInfo": false
+    }
+  }
+}

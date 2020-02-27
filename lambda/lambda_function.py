@@ -149,10 +149,10 @@ class CaptureNumberOfTrendsIntentHandler(AbstractRequestHandler):
         Some comments
         """
         
-        consumer_key = ''
-        consumer_secret = ''
-        access_token = ''
-        access_token_secret = ''
+        consumer_key = 'NhGw9k5x4IaoKp8ysBV1LRs7S'
+        consumer_secret = 'zknbFSFGnc1mZNbZByusbHXkRfTXZFOrADn73VXiGPgQS0VbPs'
+        access_token = '1069016670-Ph6RPyo8yRSSxC6loW5JGriPlgKiCZHgPoEIvES'
+        access_token_secret = '4NgeYBpk0jdYfV9YgNUnwDqpLQaVKSiyBpOjk618yHQui'
         return OAuth1(consumer_key, consumer_secret, access_token, access_token_secret)
         
     def get_twitter_trends(self, auth, handler_input):
