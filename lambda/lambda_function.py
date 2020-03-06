@@ -19,11 +19,13 @@ from ask_sdk_model import Response
 
 # Custom imports
 import requests
-from twython import Twython
 from requests_oauthlib import OAuth1
+from twython import Twython
 import re
 import json
 import datetime
+import configparser
+import base64
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -31,17 +33,17 @@ logger.setLevel(logging.INFO)
 
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for Skill Launch."""
+    
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
 
         return ask_utils.is_request_type("LaunchRequest")(handler_input)
-        
-    
+
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
+        
         speak_output = "Hello, ask me, What are the top five trends?"
         reprompt = "Social trending here... ask me, What are the top five trends"
-
         
         return (
             handler_input.response_builder
@@ -144,28 +146,27 @@ class CaptureNumberOfTrendsIntentHandler(AbstractRequestHandler):
         
         return woeids
         
-    def get_twitter_auth(self):
-        """
-        Some comments
-        """
-        
-        consumer_key = ''
-        consumer_secret = ''
-        access_token = ''
-        access_token_secret = ''
-        return OAuth1(consumer_key, consumer_secret, access_token, access_token_secret)
-        
     def get_twitter_trends(self, auth, handler_input):
         """
         Some comments
         """
         
-        uk = "23424975" # United Kingdom WOEID
-        url = "https://api.twitter.com/1.1/trends/place.json?id={woeid}".format(woeid=uk) 
-        res = requests.get(url, auth=auth)
+        headers = {"Authorization": "Bearer {}".format(auth["access_token"])}
+        
+        uk = "23424975" # United Kingdom WOEID 
+        twitter_trends_endpoint = "https://api.twitter.com/1.1/trends/place.json?id={woeid}".format(woeid=uk) 
+        res = requests.get(twitter_trends_endpoint, headers=headers)
+        
+        if res.status_code != 200:
+            auth = self.get_bearer_token()
+            headers = {"Authorization": "Bearer {}".format(auth["access_token"])}
+            res = requests.get(twitter_trends_endpoint, headers=headers)
+        
+        # invaldate_bearer_token
+        
         trends = res.json()[0]['trends']
         
-        self.save_trending_data(trends, handler_input)
+        self.save_trending_data(trends, auth, handler_input)
         
         return trends
         
@@ -174,18 +175,17 @@ class CaptureNumberOfTrendsIntentHandler(AbstractRequestHandler):
         Some comments
         """
         
-        speak_output = "Your local top trends are... "
+        speak_output = '<speak>Your local top trends are... '
         
         # get top user defined number of trends by tweet volume
         for trend in top_trends:
-            speak_output += self.add_spaces(trend['name'].replace("#", ""))
-            speak_output += ", "
+            speak_output += '{}<break time="0.5s"/>, '.format(self.add_spaces(trend['name'].replace("#", "")))
             
-        speak_output = speak_output[:-2]
+        speak_output = '{}</speak>'.format(speak_output[:-2])
         
         return speak_output
         
-    def save_trending_data(self, trends, handler_input):
+    def save_trending_data(self, trends, token, handler_input):
         """
         Some comments
         """
@@ -196,7 +196,8 @@ class CaptureNumberOfTrendsIntentHandler(AbstractRequestHandler):
             now_str = self.convert_datetime_to_str(now, self.DATE_STR_FORMAT)
             trending_attributes = {
                 "last_cached": now_str,
-                "trending_data": trends
+                "trending_data": trends,
+                "auth": token
             }
             attributes_manager.persistent_attributes = trending_attributes
             attributes_manager.save_persistent_attributes()
@@ -225,6 +226,71 @@ class CaptureNumberOfTrendsIntentHandler(AbstractRequestHandler):
         """
         
         return handler_input.attributes_manager.persistent_attributes
+    
+    def key_secret(self):
+        """
+        Some comments
+        """
+        
+        conf = configparser.ConfigParser()
+        conf.read('conf.ini')
+
+        twitter_auth_section = conf["twitter_auth"]
+        consumer_key = twitter_auth_section["consumer_key"]
+        consumer_secret = twitter_auth_section["consumer_secret"]
+        
+        key_secret = base64.urlsafe_b64encode('{}:{}'.format(consumer_key, consumer_secret).encode('ascii')).decode('ascii')
+        
+        return key_secret
+    
+    def auth_headers(self):
+        """
+        Some comments
+        """
+        
+        auth_headers = {
+            'Authorization': 'Basic {}'.format(self.key_secret()),
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        }
+        
+        return auth_headers
+        
+    def auth_data(self):
+        """
+        Some comments
+        """
+        
+        auth_data = {
+            'grant_type': 'client_credentials'
+        }
+        
+        return auth_data
+        
+    def get_bearer_token(self):
+        """
+        Some comments
+        """
+        
+        auth_endpoint = "https://api.twitter.com/oauth2/token"
+        
+        response = requests.post(auth_endpoint, headers=self.auth_headers(), data=self.auth_data())
+        
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return False
+    
+    def invaldate_bearer_token(self, access_token):
+        """
+        Some comments
+        """
+        
+        response = requests.post("https://api.twitter.com/oauth2/invalidate_token?access_token={}".format(access_token), headers=self.auth_headers())
+        
+        if response.status_code == 200:
+            return True
+        else:
+            return False
     	
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
@@ -242,8 +308,7 @@ class CaptureNumberOfTrendsIntentHandler(AbstractRequestHandler):
             top_trends = self.get_top_trends(number_of_trends_wanted, trends)
             speak_output = self.create_text_from_top_trends(top_trends)
         else:
-            auth = self.get_twitter_auth()
-            trends = self.get_twitter_trends(auth, handler_input)
+            trends = self.get_twitter_trends(stored_data["auth"], handler_input)
             top_trends = self.get_top_trends(number_of_trends_wanted, trends)
             speak_output = self.create_text_from_top_trends(top_trends)
 
