@@ -326,7 +326,7 @@ class HelpIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "You can ask me, what are the top five trends, what are the top ten trends etc"
+        speak_output = "You can ask me, what are the top five trends, or what are the top ten trends etc, go ahead, ask me"
         ask_output = "Go ahead, ask me for the top five trends"
 
         return (

@@ -31,15 +31,7 @@
           "slots": [
             {
               "name": "number",
-              "type": "AMAZON.NUMBER",
-              "samples": [
-                "what are the top {number}",
-                "what are the top {number} trends",
-                "whats the top {number}",
-                "whats the top {number} trends",
-                "what\u0027s the top {number} trends",
-                "what\u0027s the top {number}"
-              ]
+              "type": "AMAZON.NUMBER"
             }
           ],
           "samples": [
@@ -49,43 +41,7 @@
         }
       ],
       "types": []
-    },
-    "dialog": {
-      "intents": [
-        {
-          "name": "CaptureNumberOfTrendsIntent",
-          "confirmationRequired": false,
-          "prompts": {},
-          "slots": [
-            {
-              "name": "number",
-              "type": "AMAZON.NUMBER",
-              "elicitationRequired": true,
-              "confirmationRequired": false,
-              "prompts": {
-                "elicitation": "Elicit.Slot.943588598117.1252176439423"
-              }
-            }
-          ]
-        }
-      ],
-      "delegationStrategy": "ALWAYS"
-    },
-    "prompts": [
-      {
-        "id": "Elicit.Slot.943588598117.1252176439423",
-        "variations": [
-          {
-            "type": "PlainText",
-            "value": "Social trending here... ask me, What are the top five trends"
-          },
-          {
-            "type": "PlainText",
-            "value": "Hello, ask me, What are the top five trends?"
-          }
-        ]
-      }
-    ]
+    }
   },
-  "version": "14"
+  "version": "15"
 }

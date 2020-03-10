@@ -15,12 +15,15 @@
           ],
           "name": "Social Trending",
           "smallIconUri": "file://assets/images/en-GB_smallIconUri.png",
-          "description": "Uses the Twitter API to get the latest trends from within the United Kingdom. Ask it:\n\nWhat are the top five trends\nWhat are the top ten trends\netc",
+          "description": "Uses the Twitter API to get the latest trends from within the United Kingdom. Ask it:\n\nWhat are the top five trends\nWhat are the top ten trends\n\nJust replace five and ten with your own number of trends you wish to hear",
           "largeIconUri": "file://assets/images/en-GB_largeIconUri.png"
         }
       },
+      "automaticDistribution": {
+        "isActive": false
+      },
       "isAvailableWorldwide": false,
-      "testingInstructions": "None.\n\nInstructions:\n\nAlexa open social trending... wait for Alexa to reply\n\nThen ask what are the top five trends in response",
+      "testingInstructions": "Alexa open social trending\n\nwhat are the top five trends",
       "category": "SOCIAL_NETWORKING",
       "distributionCountries": [
         "GB"
